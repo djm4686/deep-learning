@@ -1,5 +1,5 @@
 from keras.datasets import reuters
-from keras.utils.np_utils import to_categorical
+from keras.utils import to_categorical
 from keras import models, layers
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,12 +10,18 @@ Classifying reuters articles into 46 different categories based on word usage
 
 (train_data, train_labels), (test_data, test_labels) = reuters.load_data(num_words=10000)
 print(len(train_data), len(test_data))
+print(train_data[0])
+print(train_labels[0])
 
-# word_index = imdb.get_word_index()
-# reverse_index = dict([(value, key) for (key, value) in word_index.items()])
-# decoded_words = ' '.join([reverse_index.get(i-3, '?') for i in train_data[0]])
-# print(decoded_words)
-# print(train_data)
+word_index = reuters.get_word_index()
+reverse_index = dict([(value, key) for (key, value) in word_index.items()])
+decoded_words = ' '.join([reverse_index.get(i-3, '?') for i in train_data[0]])
+decoded_words2 = ' '.join([reverse_index.get(i-3, '?') for i in train_data[1]])
+decoded_words3 = ' '.join([reverse_index.get(i-3, '?') for i in train_data[2]])
+print(decoded_words)
+print(decoded_words2)
+print(decoded_words3)
+print(train_labels[0:3])
 
 def vectorize_sequence(sequences, dimensions=10000):
     results = np.zeros((len(sequences), dimensions))
@@ -56,11 +62,10 @@ history = model.fit(partial_x_train,
                     partial_y_train,
                     batch_size=512, epochs=9,
                     validation_data=(x_val, y_val))
-
 loss = history.history['loss']
 val_loss = history.history['val_loss']
-acc = history.history['acc']
-val_acc = history.history['val_acc']
+acc = history.history['accuracy']
+val_acc = history.history['val_accuracy']
 epochs = range(1, len(loss) + 1)
 
 results = model.evaluate(x_test, one_hot_test_labels)

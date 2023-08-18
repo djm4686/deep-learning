@@ -11,12 +11,14 @@ Classifying mnist 'handwritten' images as numbers
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
-# digit = train_images[4]
-# plt.imshow(digit, cmap=plt.cm.binary)
-# plt.show()
+digit = train_images[4]
+print(train_labels[4])
+print(train_images[4])
+plt.imshow(digit, cmap=plt.cm.binary)
+plt.show()
 
 network = models.Sequential()
-network.add(layers.Dense(784, activation='relu', input_shape=(28*28,)))
+network.add(layers.Dense(785, activation='relu', input_shape=(28*28,)))
 network.add(layers.Dense(10, activation='softmax'))
 
 network.compile(optimizer='rmsprop',
@@ -31,8 +33,32 @@ test_images = test_images.astype('float32')/255
 
 train_labels = to_categorical(train_labels)
 test_labels = to_categorical(test_labels)
+print(len(train_images))
+x_val = train_images[:30000]
+partial_x_train = train_images[30000:]
 
-network.fit(train_images, train_labels, epochs=1, batch_size=128)
+y_val = train_labels[:30000]
+partial_y_train = train_labels[30000:]
+
+history = network.fit(partial_x_train, partial_y_train, epochs=10, batch_size=128, validation_data=[x_val, y_val])
+
+
 
 test_loss, test_acc = network.evaluate(test_images, test_labels)
+
 print("Loss: {}, Accuracy: {}".format(test_loss, test_acc))
+print(history.history.keys())
+history_dict = history.history
+loss = history_dict['loss']
+print(loss)
+val_loss = history_dict['val_loss']
+acc = history_dict['accuracy']
+val_acc = history_dict['val_accuracy']
+
+epochs = range(1, len(loss) + 1)
+plt.plot(epochs, loss, 'bo', label="Loss")
+plt.plot(epochs, acc, 'b', label="Accuracy")
+plt.plot(epochs, val_loss, 'ro', label="Validator Loss")
+plt.plot(epochs, val_acc, 'r', label="Validator Acc")
+plt.legend()
+plt.show()

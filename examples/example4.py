@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 """
-Predicting median prices of homesin a given suburb based on suburb data points
+Predicting median prices of homes in a given suburb based on suburb data points
 """
 
 
@@ -12,11 +12,11 @@ Predicting median prices of homesin a given suburb based on suburb data points
 
 print(train_data.shape) # (404, 13)
 print(test_data.shape) # (102, 13)
-
+print("train data", train_data[0])
+print("train_targets", train_targets[0])
 mean = train_data.mean(axis=0)
 std = train_data.std(axis=0)
 
-print(train_data[0]) # unmodified
 
 # subtract the mean of each feature, divide by standard deviation.
 # 'best practice' for normalizing data. Centers data around 0
@@ -27,8 +27,6 @@ print(mean, std)
 test_data -= mean
 test_data /= std
 
-print(train_data[0])
-print(test_data[0])
 
 def build_model():
     model = models.Sequential()
@@ -65,7 +63,7 @@ for i in range(k):
     history = model.fit(partial_train_data, partial_train_targets, validation_data=(val_data, val_targets), epochs=num_epochs, batch_size=1)
     print(history.history.keys())
     print(history.__dict__.keys())
-    all_mae_history.append(history.history['val_mean_absolute_error'])
+    all_mae_history.append(history.history['val_mae'])
     val_mse, val_mae = model.evaluate(val_data, val_targets)
     all_scores.append(val_mae)
 
